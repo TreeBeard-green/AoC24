@@ -17,15 +17,14 @@ namespace Day3
         static int Part1(string[] lines)
         {
             int sum = 0;
-            Regex rx = new Regex(@"(mul[(][0-9]+[,][0-9]+[)])");
+            Regex rx = new Regex(@"mul\(([0-9]+),([0-9]+)\)");
 
             foreach (string line in lines)
             {
                 MatchCollection matches = rx.Matches(line);
                 foreach (Match match in matches)
                 {
-                    MatchCollection numbers = new Regex(@"\d+").Matches(match.Value);
-                    sum += int.Parse(numbers[0].Value) * int.Parse(numbers[1].Value);
+                    sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
                 }
             }
             return sum;
@@ -35,7 +34,7 @@ namespace Day3
         {
             int sum = 0;
             bool doCount = true;
-            Regex rx = new Regex(@"(mul[(][0-9]+[,][0-9]+[)])|(do\(\))|(don't\(\))");
+            Regex rx = new Regex(@"mul\(([0-9]+),([0-9]+)\)|do\(\)|don't\(\)");
 
             foreach (string line in lines)
             {
@@ -52,8 +51,7 @@ namespace Day3
                     }
                     else if (doCount)
                     {
-                        MatchCollection numbers = new Regex(@"\d+").Matches(match.Value);
-                        sum += int.Parse(numbers[0].Value) * int.Parse(numbers[1].Value);
+                        sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
                     }
                 }
             }
