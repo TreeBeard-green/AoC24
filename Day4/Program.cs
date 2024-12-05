@@ -21,13 +21,13 @@ namespace Day4
             int sum = 0;
             int xMax = input[0].Length, yMax = input.Length;
 
-            for (int i = 3; i < yMax - 3; i++) 
+            for (int y = 1; y < yMax - 1; y++) 
             {
-                for (int j = 3; j < xMax - 3; j++)
+                for (int x = 1; x < xMax - 1; x++)
                 {
-                    if (input[i][j] == 'X')
+                    if (input[y][x] == 'X')
                     {
-                        sum += CountXMAS(input, j, i);
+                        sum += CountXMAS(input, x, y);
                     }
                 }
             }
@@ -39,13 +39,13 @@ namespace Day4
             int sum = 0;
             int xMax = input[0].Length, yMax = input.Length;
 
-            for (int i = 3; i < yMax - 3; i++)
+            for (int y = 1; y < yMax - 1; y++)
             {
-                for (int j = 3; j < xMax - 3; j++)
+                for (int x = 1; x < xMax - 1; x++)
                 {
-                    if (input[i][j] == 'A')
+                    if (input[y][x] == 'A')
                     {
-                        if (CheckX_MAS(input, j, i))
+                        if (CheckX_MAS(input, x, y))
                         {
                             sum++;
                         }
@@ -63,12 +63,9 @@ namespace Day4
                 for (int j = -1; j < 2; j++)
                 {
                     // Checking entire line 
-                    if (input[y + j][x + i] == 'M')
+                    if (input[y + j][x + i] == 'M' && input[y + (j * 2)][x + (i * 2)] == 'A' && input[y + (j * 3)][x + (i * 3)] == 'S')
                     {
-                        if (input[y + (j * 2)][x + (i * 2)] == 'A' && input[y + (j * 3)][x + (i * 3)] == 'S')
-                        {
-                            count++;
-                        }
+                        count++;
                     }
                 }
             }
@@ -91,28 +88,27 @@ namespace Day4
                     return true;
                 }
             }
-
             return false;
         }
 
         static string[] PadArray(string[] input)
         {
             // Padding array (lazy to make proper bound checks, could also try/catch instead)
-            string[] lines = new string[input.Length + 6];
+            string[] lines = new string[input.Length + 2];
             string filler = string.Empty;
-            for (int i = 0; i < input[0].Length + 6; i++)
+
+            for (int i = 0; i < input[0].Length + 2; i++)
             {
                 filler += '.';
             }
+
             for (int i = 0; i < input.Length; i++)
             {
-                lines[i + 3] = "..." + input[i] + "...";
+                lines[i + 1] = '.' + input[i] + '.';
             }
-            for (int i = 0; i < 3; i++)
-            {
-                lines[i] = filler;
-                lines[i + input.Length + 3] = filler;
-            }
+
+            lines[0] = filler;
+            lines[input.Length + 1] = filler;
             return lines;
         }
     }

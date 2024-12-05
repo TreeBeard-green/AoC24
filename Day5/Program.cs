@@ -75,6 +75,7 @@ namespace Day5
             int id = Array.IndexOf(input, string.Empty);
             Dictionary<int, List<int>> rules = new Dictionary<int, List<int>>();
             int[][] updates = new int[input.Length - id - 1][];
+
             // Create map of rules
             for (int i = 0; i < id; i++)
             {
@@ -85,8 +86,7 @@ namespace Day5
                 }
                 else
                 {
-                    rules[leftPage] = new List<int>();
-                    rules[leftPage].Add(rightPage);
+                    rules[leftPage] = new List<int> {rightPage};
                 }
             }
             // Create jagged array of updates
@@ -100,7 +100,6 @@ namespace Day5
                 }
                 updates[i - id - 1] = nums;
             }
-
             return (rules, updates);
         }
     }

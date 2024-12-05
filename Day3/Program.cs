@@ -14,12 +14,12 @@ namespace Day3
             Console.WriteLine(Part2(input));
         }
 
-        static int Part1(string[] lines)
+        static int Part1(string[] input)
         {
             int sum = 0;
             Regex rx = new Regex(@"mul\(([0-9]+),([0-9]+)\)");
 
-            foreach (string line in lines)
+            foreach (string line in input)
             {
                 MatchCollection matches = rx.Matches(line);
                 foreach (Match match in matches)
@@ -30,22 +30,22 @@ namespace Day3
             return sum;
         }
 
-        static int Part2(string[] lines)
+        static int Part2(string[] input)
         {
             int sum = 0;
             bool doCount = true;
             Regex rx = new Regex(@"mul\(([0-9]+),([0-9]+)\)|do\(\)|don't\(\)");
 
-            foreach (string line in lines)
+            foreach (string line in input)
             {
                 MatchCollection matches = rx.Matches(line);
                 foreach (Match match in matches)
                 {
-                    if (match.Value.Equals("do()"))
+                    if (match.Value == "do()")
                     {
                         doCount = true;
                     }
-                    else if (match.Value.Equals("don't()"))
+                    else if (match.Value == "don't()")
                     {
                         doCount = false;
                     }

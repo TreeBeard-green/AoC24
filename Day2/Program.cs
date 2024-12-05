@@ -13,12 +13,12 @@ namespace Day2
             Console.WriteLine(Part2(input));
         }
 
-        static int Part1(string[] lines)
+        static int Part1(string[] input)
         {
             int sum = 0;
-            foreach (string line in lines)
+            foreach (string report in input)
             {
-                int[] numbers = ConvertLine(line.Split(' '));
+                int[] numbers = ParseLine(report.Split(' '));
                 if (numbers[0] < numbers[1])
                 {
                     Array.Reverse(numbers);
@@ -36,16 +36,16 @@ namespace Day2
             return sum;
         }
 
-        static int Part2(string[] lines)
+        static int Part2(string[] input)
         {
             int sum = 0;
             
-            foreach (string line in lines)
+            foreach (string report in input)
             {
                 bool oneFailure = false;
                 bool failure = false;
 
-                int[] numbers = ConvertLine(line.Split(' '));
+                int[] numbers = ParseLine(report.Split(' '));
 
                 if (numbers[0] < numbers[1])
                 {
@@ -63,12 +63,13 @@ namespace Day2
             return sum;
         }
 
-        static int[] ConvertLine(string[] line)
+        static int[] ParseLine(string[] line)
         {
-            int[] arr = new int[line.Length];
-            for (int i = 0; i < line.Length; i++)
+            int size = line.Length;
+            int[] arr = new int[size];
+            for (int i = 0; i < size; i++)
             {
-                arr[i] = Convert.ToInt32(line[i]);
+                arr[i] = int.Parse(line[i]);
             }
             return arr;
         }
@@ -90,6 +91,7 @@ namespace Day2
             for (int i = 1; i < arr.Length; i++)
             {
                 int dif = arr[i - 1] - arr[i];
+
                 if (dif == 0 || dif > 3)
                 {
                     return false;
@@ -103,6 +105,7 @@ namespace Day2
             for (int i = 1; i < arr.Length; i++)
             {
                 int dif = arr[i - 1] - arr[i];
+
                 if (dif == 0 || dif > 3)
                 {
                     if (!fail)

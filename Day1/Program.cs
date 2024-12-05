@@ -12,23 +12,11 @@ namespace Day1
 
             Console.WriteLine(Part2(input));
         }
-        static (int[], int[]) GetArrays(string[] lines)
-        {
-            int[] left = new int[lines.Length];
-            int[] right = new int[lines.Length];
 
-            for (int i = 0; i < lines.Length; i++)
-            {
-                left[i] = int.Parse(lines[i].Split(new string[] { "   " }, StringSplitOptions.None)[0]);
-                right[i] = int.Parse(lines[i].Split(new string[] { "   " }, StringSplitOptions.None)[1]);
-            }
-            return (left, right);
-        }
-
-        static int Part1(string[] lines)
+        static int Part1(string[] input)
         {
             int sum = 0;
-            (int[] leftArray, int[] rightArray) = GetArrays(lines);
+            (int[] leftArray, int[] rightArray) = GetArrays(input);
 
             Array.Sort(leftArray);
             Array.Sort(rightArray);
@@ -41,11 +29,11 @@ namespace Day1
             return sum;
         }
 
-        static int Part2(string[] lines)
+        static int Part2(string[] input)
         {
             int sum = 0;
 
-            (int[] leftArray, int[] rightArray) = GetArrays((string[])lines);
+            (int[] leftArray, int[] rightArray) = GetArrays((string[])input);
 
             Dictionary <int, int> rightNumbers = new Dictionary<int, int>();
 
@@ -72,5 +60,18 @@ namespace Day1
             return sum;
         }
 
+        static (int[], int[]) GetArrays(string[] input)
+        {
+            int size = input.Length;
+            int[] left = new int[size];
+            int[] right = new int[size];
+
+            for (int i = 0; i < size; i++)
+            {
+                left[i] = int.Parse(input[i].Split(new string[] { "   " }, StringSplitOptions.None)[0]);
+                right[i] = int.Parse(input[i].Split(new string[] { "   " }, StringSplitOptions.None)[1]);
+            }
+            return (left, right);
+        }
     }
 }
