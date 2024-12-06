@@ -46,13 +46,13 @@ namespace Day6
         {
             int w = input.GetLength(0), h = input.GetLength(1);
             List<(int, int)> list = new List<(int, int)>();
-            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
             {
-                for (int x = 0; x < w; x++)
+                for (int y = 0; y < h; y++)
                 {
-                    if (input[y, x] == 'X')
+                    if (input[x, y] == 'X')
                     {
-                        list.Add((y, x));
+                        list.Add((x, y));
                     }
                 }
             }
@@ -63,11 +63,11 @@ namespace Day6
         {
             int w = input.GetLength(0), h = input.GetLength(1);
             int sum = 0;
-            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
             {
-                for (int x = 0; x < w; x++)
+                for (int y = 0; y < h; y++)
                 {
-                    if (input[y, x] == 'X')
+                    if (input[x, y] == 'X')
                     {
                         sum++;
                     }
@@ -79,7 +79,7 @@ namespace Day6
         static bool IsGuardLooped(char[,] input, (int, int) guardsPos, (int, int) xPos)
         {
             int x, y, nextX, nextY, direction = 0;
-            (y, x) = guardsPos;
+            (x, y) = guardsPos;
             int w = input.GetLength(0), h = input.GetLength(1);
             // Coordinates in (y, x) arrengement
             (int, int)[] walk = { (-1, 0), (0, 1), (1, 0), (0, -1) };
@@ -88,20 +88,20 @@ namespace Day6
             // replace an X with new obstacle, revert change after checking
             input[xPos.Item1, xPos.Item2] = '#';
 
-            (nextY, nextX) = AddTuples((y, x), walk[direction]);
+            (nextX, nextY) = AddTuples((x, y), walk[direction]);
 
-            while (nextX != -1 && nextY != -1 && nextX != w && nextY != h)
+            while (nextY != -1 && nextX != -1 && nextY != h && nextX != w)
             {
-                if (input[nextY, nextX] == '#')
+                if (input[nextX, nextY] == '#')
                 {
-                    if (hits.Contains((nextY,nextX, direction)))
+                    if (hits.Contains((nextX,nextY, direction)))
                     {
                         input[xPos.Item1, xPos.Item2] = 'X';
                         return true;
                     }
                     else
                     {
-                        hits.Add((nextY, nextX, direction));
+                        hits.Add((nextX, nextY, direction));
                     }
                     if (direction == 3)
                     {
@@ -114,9 +114,9 @@ namespace Day6
                 }
                 else
                 {
-                    (y, x) = (nextY, nextX);
+                    (x, y) = (nextX, nextY);
                 }
-                (nextY, nextX) = AddTuples((y, x), walk[direction]);
+                (nextX, nextY) = AddTuples((x, y), walk[direction]);
             }
             input[xPos.Item1, xPos.Item2] = 'X';
             return false;
@@ -125,16 +125,16 @@ namespace Day6
         static void MarkPath(char[,] input, (int, int) guardPos)
         {
             int x, y, nextX, nextY, direction = 0;
-            (y, x) = guardPos;
+            (x, y) = guardPos;
             int w = input.GetLength(0), h = input.GetLength(1);
             // Coordinates in (y, x) arrengement
             (int, int)[] walk = { (-1, 0), (0, 1), (1, 0), (0, -1) };
 
-            (nextY, nextX) = AddTuples((y, x), walk[direction]);
+            (nextX, nextY) = AddTuples((x, y), walk[direction]);
 
-            while (nextX != -1 && nextY != -1 && nextX != w && nextY != h)
+            while (nextY != -1 && nextX != -1 && nextY != h && nextX != w)
             {
-                if (input[nextY, nextX] == '#')
+                if (input[nextX, nextY] == '#')
                 {
                     if (direction == 3)
                     {
@@ -147,25 +147,25 @@ namespace Day6
                 }
                 else
                 {
-                    input[y, x] = 'X';
-                    (y, x) = (nextY, nextX);
+                    input[x, y] = 'X';
+                    (x, y) = (nextX, nextY);
                 }
-                (nextY, nextX) = AddTuples((y, x), walk[direction]);
+                (nextX, nextY) = AddTuples((x, y), walk[direction]);
             }
-            input[y, x] = 'X';
+            input[x, y] = 'X';
         }
 
         static (int, int) GetGuardPos(char[,] input)
         {
             int w = input.GetLength(0), h = input.GetLength(1);
 
-            for (int y = 0; y < h; y++)
+            for (int x = 0; x < h; x++)
             {
-                for (int x = 0; x < w; x++)
+                for (int y = 0; y < w; y++)
                 {
-                    if (input[y, x] == '^')
+                    if (input[x, y] == '^')
                     {
-                        return (y, x);
+                        return (x, y);
                     }
                 }
             }
@@ -174,7 +174,7 @@ namespace Day6
 
         static char[,] ParseInput(string[] input)
         {
-            int w = input.Length, h = input[0].Length;
+            int w = input[0].Length, h = input.Length;
             char[,] output = new char[w, h];
             for (int i = 0; i < w; i++)
             {
