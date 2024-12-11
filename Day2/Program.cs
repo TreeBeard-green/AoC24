@@ -19,18 +19,27 @@ namespace Day2
             foreach (string report in input)
             {
                 int[] numbers = ParseLine(report.Split(' '));
+
                 if (numbers[0] < numbers[1])
                 {
-                    Array.Reverse(numbers);
-                }
-                if (IsDescending(numbers))
-                {
-                    if (DifferenceCheck(numbers))
+                    if (IsAscending(numbers))
                     {
-                        sum++;
+                        if (DifferenceCheck(numbers))
+                        {
+                            sum++;
+                        }
                     }
                 }
-
+                else
+                {
+                    if (IsDescending(numbers))
+                    {
+                        if (DifferenceCheck(numbers))
+                        {
+                            sum++;
+                        }
+                    }
+                }
             }
 
             return sum;
@@ -44,14 +53,16 @@ namespace Day2
             {
                 bool oneFailure = false;
                 bool failure = false;
-
                 int[] numbers = ParseLine(report.Split(' '));
 
                 if (numbers[0] < numbers[1])
                 {
-                    Array.Reverse(numbers);
+                    (failure, oneFailure) = IsAscending(numbers, oneFailure);
                 }
-                (failure, oneFailure) = IsDescending(numbers, oneFailure);
+                else
+                {
+                    (failure, oneFailure) = IsDescending(numbers, oneFailure);
+                }
                 if (failure)
                 {
                     if (DifferenceCheck(numbers, oneFailure))
@@ -86,41 +97,6 @@ namespace Day2
             return true;
         }
 
-        static bool DifferenceCheck(int[] arr)
-        {
-            for (int i = 1; i < arr.Length; i++)
-            {
-                int dif = arr[i - 1] - arr[i];
-
-                if (dif == 0 || dif > 3)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        static bool DifferenceCheck(int[] arr, bool fail)
-        {
-            for (int i = 1; i < arr.Length; i++)
-            {
-                int dif = arr[i - 1] - arr[i];
-
-                if (dif == 0 || dif > 3)
-                {
-                    if (!fail)
-                    {
-                        fail = true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
         static (bool, bool) IsDescending(int[] arr, bool fail)
         {
             for (int i = 1; i < arr.Length; i++)
@@ -139,5 +115,73 @@ namespace Day2
             }
             return (true, fail);
         }
+
+        static bool IsAscending(int[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (arr[i - 1] > arr[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static (bool, bool) IsAscending(int[] arr, bool fail)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (arr[i - 1] > arr[i])
+                {
+                    if (!fail)
+                    {
+                        fail = true;
+                    }
+                    else
+                    {
+                        return (false, fail);
+                    }
+                }
+            }
+            return (true, fail);
+        }
+
+        static bool DifferenceCheck(int[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int dif = Math.Abs(arr[i - 1] - arr[i]);
+
+                if (dif == 0 || dif > 3)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static bool DifferenceCheck(int[] arr, bool fail)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int dif = Math.Abs(arr[i - 1] - arr[i]);
+
+                if (dif == 0 || dif > 3)
+                {
+                    if (!fail)
+                    {
+                        fail = true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        
     }
 }

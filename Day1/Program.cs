@@ -8,18 +8,18 @@ namespace Day1
         {
             string[] input = Advent.GetInput(typeof(Program).Namespace);
 
-            Console.WriteLine(Part1(input));
+            (int[], int[]) arrays = GetArrays(input);
 
-            Console.WriteLine(Part2(input));
+            Console.WriteLine(Part1(arrays.Item1, arrays.Item2));
+
+            Console.WriteLine(Part2(arrays.Item1, arrays.Item2));
         }
 
-        static int Part1(string[] input)
+        static int Part1(int[] leftArray, int[] rightArray)
         {
-            int sum = 0;
-            (int[] leftArray, int[] rightArray) = GetArrays(input);
-
             Array.Sort(leftArray);
             Array.Sort(rightArray);
+            int sum = 0;
 
             for (int i = 0; i < leftArray.Length; i++)
             {
@@ -29,31 +29,28 @@ namespace Day1
             return sum;
         }
 
-        static int Part2(string[] input)
+        static int Part2(int[] leftArray, int[] rightArray)
         {
-            int sum = 0;
-
-            (int[] leftArray, int[] rightArray) = GetArrays((string[])input);
-
-            Dictionary <int, int> rightNumbers = new Dictionary<int, int>();
+            var rightNumbers = new Dictionary<int, int>();
 
             foreach (int i in rightArray) 
             {
-                if (rightNumbers.ContainsKey(i))
+                if (rightNumbers.TryGetValue(i, out int value))
                 {
-                    rightNumbers[i]++;
+                    rightNumbers[i] = ++value;
                 }
                 else
                 {
                     rightNumbers[i] = 1;
                 }
             }
+            int sum = 0;
 
             foreach (int i in leftArray)
             {
-                if (rightNumbers.ContainsKey(i))
+                if (rightNumbers.TryGetValue(i, out int value))
                 {
-                    sum += rightNumbers[i] * i;
+                    sum += value * i;
                 }
             }
 
@@ -68,8 +65,9 @@ namespace Day1
 
             for (int i = 0; i < size; i++)
             {
-                left[i] = int.Parse(input[i].Split(new string[] { "   " }, StringSplitOptions.None)[0]);
-                right[i] = int.Parse(input[i].Split(new string[] { "   " }, StringSplitOptions.None)[1]);
+                var arrays = input[i].Split(new string[] { "   " }, StringSplitOptions.None);
+                left[i] = int.Parse(arrays[0]);
+                right[i] = int.Parse(arrays[1]);
             }
             return (left, right);
         }

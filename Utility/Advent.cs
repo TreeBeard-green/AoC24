@@ -16,7 +16,7 @@ public static class Advent
         source[index2] = temp;
     }
 
-    public static Grid ConvertInputToGrid(string[] input)
+    public static Grid ConvertInputToGrid(string[] input, int padding)
     {
         // Output array is properly x y oriented
         int w = input[0].Length, h = input.Length;
@@ -56,12 +56,12 @@ public struct Coordinates(int x, int y)
         return (X, Y);
     }
 
-    public void AddCoords((int, int) t)
+    public void AddCoords(Coordinates t)
     {
-        X += t.Item1; Y += t.Item2;
+        X += t.X; Y += t.Y;
     }
-    public void SubstractCoords((int, int) t)
+    public void SubstractCoords(Coordinates t)
     {
-        X -= t.Item1; Y -= t.Item2;
+        X -= t.X; Y -= t.Y;
     }
 }
