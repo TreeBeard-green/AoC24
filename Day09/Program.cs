@@ -14,7 +14,7 @@ namespace Day9
         {
             string[] input = Advent.GetInput(typeof(Program).Namespace);
 
-            Console.WriteLine("  " + Part1(input[0]));
+            Console.WriteLine(Part1(input[0]));
             Console.WriteLine(Part2(input[0]));
         }
 

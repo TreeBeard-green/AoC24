@@ -5,6 +5,10 @@ public static class Advent
 
     public static string[] GetInput(string day)
     {
+        if (day.Length < 5)
+        {
+            day = "Day0" + day[3];
+        }
         string path = AppDomain.CurrentDomain.BaseDirectory.Split(day)[0] + @"Data\" + day + ".txt";
         return File.ReadAllLines(path);
     }
