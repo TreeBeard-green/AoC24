@@ -11,57 +11,164 @@ public static class Advent
 
     public static void SwapValues<T>(this T[] source, int index1, int index2)
     {
-        T temp = source[index1];
-        source[index1] = source[index2];
-        source[index2] = temp;
+        (source[index2], source[index1]) = (source[index1], source[index2]);
     }
 
-    public static Grid ConvertInputToGrid(string[] input, int padding)
+    static string[] PadInput(string[] input, int size, char pad)
     {
-        // Output array is properly x y oriented
-        int w = input[0].Length, h = input.Length;
-        char[,] output = new char[w, h];
-        for (int i = 0; i < w; i++)
+        int h = input.Length, w = input[0].Length;
+        string[] lines = new string[h + (size * 2)];
+        string filler = string.Empty;
+
+        for (int i = 0; i < w + (size * 2); i++)
         {
-            for (int j = 0; j < h; j++)
+            filler += pad;
+        }
+
+        for (int i = 0; i < h; i++)
+        {
+            string t = string.Empty;
+            for (int j = 0; j < size; j++)
             {
-                output[j, i] = input[i][j];
+                t += pad;
+            }
+            lines[i + size] = t + input[i] + t;
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            lines[0 + i] = filler;
+            lines[h + size + i] = filler;
+        }
+        return lines;
+    }
+
+    public static Grid<T> ConvertInputToGrid<T>(string[] input)
+    {
+        int w = input[0].Length, h = input.Length;
+        T[,] output = new T[w, h];
+
+        for (int i = 0; i < h; i++)
+        {
+            for (int j = 0; j < w; j++)
+            {
+                output[j, i] = (T)Convert.ChangeType(input[i][j], typeof(T));
             }
         }
-        return new Grid(output, w, h);
+        return new Grid<T>(output, w, h);
+    }
+
+    public static Grid<T> ConvertInputToGrid<T>(string[] input, int padSize, char pad)
+    {
+        input = PadInput(input, padSize, pad);
+        int w = input[0].Length, h = input.Length;
+        T[,] output = new T[w, h];
+
+        for (int i = 0; i < h; i++)
+        {
+            for (int j = 0; j < w; j++)
+            {
+                output[j, i] = (T)Convert.ChangeType(input[i][j], typeof(T));
+            }
+        }
+        return new Grid<T>(output, w, h);
     }
 }
-public struct Grid(char[,] g, int w, int h)
+
+/// <summary>
+/// X goes left to right, y goes north to south
+/// </summary>
+public struct Grid<T>(T[,] g, int w, int h)
 {
     public int width = w, height = h;
-    private char[,] grid = g;
+    private T[,] grid = g;
 
-    public readonly char GetValue(int x, int y)
+    public readonly T GetValue(Coordinates coords)
+    {
+        int x, y;
+        (x, y) = coords.GetCoords();
+        return grid[x, y];
+    }
+    public readonly T GetValue(int x, int y)
     {
         return grid[x, y];
     }
-
-    public void SetValue(int x, int y, char c)
+    public void SetValue(Coordinates coords, T value)
     {
-        grid [x, y] = c;
+        int x, y;
+        (x, y) = coords.GetCoords();
+        grid[x, y] = value;
+    }
+    public void SetValue(int x, int y, T value)
+    {
+        grid[x, y] = value;
     }
 }
 
-public struct Coordinates(int x, int y)
+public struct Coordinates(int n1, int n2)
 {
-    private int X = x, Y = y;
+    private int x = n1, y = n2;
+
+    private static readonly Coordinates upCoords = new (0, -1);
+    private static readonly Coordinates downCoords = new (0, 1);
+    private static readonly Coordinates rightCoords = new (1, 0);
+    private static readonly Coordinates leftCoords = new (-1, 0);
+    private static readonly Coordinates upLeftCoords = new(-1, -1);
+    private static readonly Coordinates upRightCoords = new(1, -1);
+    private static readonly Coordinates downLeftCoords = new(-1, 1);
+    private static readonly Coordinates downRightCoords = new(1, 1);
+
+    public static Coordinates Up => upCoords;
+    public static Coordinates Down => downCoords;
+    public static Coordinates Left => leftCoords;
+    public static Coordinates Right => rightCoords;
+    public static Coordinates UpLeft => upLeftCoords;
+    public static Coordinates UpRight => upRightCoords;
+    public static Coordinates DownRight => downRightCoords;
+    public static Coordinates DownLeft => downLeftCoords;
+
+    public readonly int X()
+    {
+        return x;
+    }
+
+    public readonly int Y()
+    {
+        return y;
+    }
 
     public readonly (int, int) GetCoords()
     {
-        return (X, Y);
+        return (x, y);
     }
 
-    public void AddCoords(Coordinates t)
+    public void AddCoords(Coordinates input)
     {
-        X += t.X; Y += t.Y;
+        x += input.x; y += input.y;
     }
-    public void SubstractCoords(Coordinates t)
+
+    public void AddCoords((int, int) input)
     {
-        X -= t.X; Y -= t.Y;
+        x += input.Item1; y += input.Item2;
+    }
+
+    public void SubstractCoords(Coordinates input)
+    {
+        x -= input.x; y -= input.y;
+    }
+
+    public void SubstractCoords((int, int) input)
+    {
+        x -= input.Item1; y -= input.Item2;
+    }
+
+    public readonly Coordinates SumOfCoords((int, int) input)
+    {
+        return new(x + input.Item1, y + input.Item2);
+    }
+
+    public static Coordinates operator +(Coordinates c1, Coordinates c2)
+    {
+        return new(c1.x + c2.x, c1.y + c2.y);
     }
 }
