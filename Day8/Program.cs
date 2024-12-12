@@ -8,7 +8,7 @@ namespace Day8
         {
             string[] input = Advent.GetInput(typeof(Program).Namespace);
 
-            var grid = Advent.ConvertInputToGrid(input);
+            var grid = Advent.ConvertInputToGrid<char>(input);
             var antennas = GetAllAntennas(grid);
 
             Console.WriteLine(Part1(grid, antennas));
@@ -16,7 +16,7 @@ namespace Day8
             Console.WriteLine(Part2(grid, antennas));
         }
 
-        static int Part1(Grid grid, Dictionary<char, List<(int, int)>> antennas)
+        static int Part1(Grid<char> grid, Dictionary<char, List<Coordinates>> antennas)
         {
             int sum = 0;
             foreach (var antenna in antennas)
@@ -46,7 +46,7 @@ namespace Day8
             return sum;
         }
 
-        static int Part2(Grid grid, Dictionary<char, List<(int, int)>> antennas)
+        static int Part2(Grid<char> grid, Dictionary<char, List<Coordinates>> antennas)
         {
             int sum = 0;
             foreach (var antenna in antennas)
@@ -85,64 +85,54 @@ namespace Day8
             return sum;
         }
 
-        static void PlaceNodes(Grid grid, (int , int) pos1, (int, int) pos2, bool part2)
+        static void PlaceNodes(Grid<char> grid, Coordinates pos1, Coordinates pos2, bool part2)
         {
-            int w = grid.width, h = grid.height;
-            var dif = SubstractTuples(pos2, pos1);
-            var np1 = SubstractTuples(pos1, dif);
-            var np2 = AddTuples(pos2, dif);
+            var dif = pos2 - pos1;
+            var np1 = pos1 - dif;
+            var np2 = pos2 + dif;
             if (part2)
             {
-                while (np1.Item1 >= 0 && np1.Item1 < w && np1.Item2 >= 0 && np1.Item2 < h)
+                while (np1.X >= 0 && np1.X < grid.width && np1.Y >= 0 && np1.Y < grid.height)
                 {
-                    grid.SetValue(np1.Item1, np1.Item2, '#');
-                    np1 = SubstractTuples(np1, dif);
+                    grid.SetValue(np1, '#');
+                    np1 = np1 - dif;
                 }
-                while (np2.Item1 >= 0 && np2.Item1 < w && np2.Item2 >= 0 && np2.Item2 < h)
+                while (np2.X >= 0 && np2.X < grid.width && np2.Y >= 0 && np2.Y < grid.height)
                 {
-                    grid.SetValue(np2.Item1, np2.Item2, '#');
-                    np2 = AddTuples(np2, dif);
+                    grid.SetValue(np2, '#');
+                    np2 = np2 + dif;
                 }
             }
             else
             {
-                if (np1.Item1 >= 0 && np1.Item1 < w && np1.Item2 >= 0 && np1.Item2 < h)
+                if (np1.X >= 0 && np1.X < grid.width && np1.Y >= 0 && np1.Y < grid.height)
                 {
-                    grid.SetValue(np1.Item1, np1.Item2, '#');
+                    grid.SetValue(np1, '#');
                 }
-                if (np2.Item1 >= 0 && np2.Item1 < w && np2.Item2 >= 0 && np2.Item2 < h)
+                if (np2.X >= 0 && np2.X < grid.width && np2.Y >= 0 && np2.Y < grid.height)
                 {
-                    grid.SetValue(np2.Item1, np2.Item2, '#');
+                    grid.SetValue(np2, '#');
                 }
             }
         }
-        static (int, int) AddTuples((int, int) t1, (int, int) t2)
-        {
-            return (t1.Item1 + t2.Item1, t1.Item2 + t2.Item2);
-        }
-        static (int, int) SubstractTuples((int, int) t1, (int, int) t2)
-        {
-            return (t1.Item1 - t2.Item1, t1.Item2 - t2.Item2);
-        }
-        static Dictionary<char, List<(int, int)>> GetAllAntennas(Grid grid)
-        {
-            int w = grid.width, h = grid.height;
 
-            Dictionary<char, List<(int, int)>> output = new Dictionary<char, List<(int, int)>>();
+        static Dictionary<char, List<Coordinates>> GetAllAntennas(Grid<char> grid)
+        {
+            var output = new Dictionary<char, List<Coordinates>>();
 
-            for (int i = 0; i < h; i++)
+            for (int y = 0; y < grid.height; y++)
             {
-                for (int j = 0; j < w; j++)
+                for (int x = 0; x < grid.width; x++)
                 {
-                    if (grid.GetValue(j, i) != '.')
+                    if (grid.GetValue(x, y) != '.')
                     {
-                        char c = grid.GetValue(j, i);
-                        if (!output.TryGetValue(c, out List<(int, int)>? value))
+                        char c = grid.GetValue(x, y);
+                        if (!output.TryGetValue(c, out List<Coordinates>? value))
                         {
-                            value = new List<(int, int)>();
+                            value = new List<Coordinates>();
                             output[c] = value;
                         }
-                        value.Add((j, i));
+                        value.Add(new (x, y));
                     }
                 }
             }

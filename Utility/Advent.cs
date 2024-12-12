@@ -127,15 +127,8 @@ public struct Coordinates(int n1, int n2)
     public static Coordinates DownRight => downRightCoords;
     public static Coordinates DownLeft => downLeftCoords;
 
-    public readonly int X()
-    {
-        return x;
-    }
-
-    public readonly int Y()
-    {
-        return y;
-    }
+    public readonly int X => x;
+    public readonly int Y => y;
 
     public readonly (int, int) GetCoords()
     {
@@ -170,5 +163,10 @@ public struct Coordinates(int n1, int n2)
     public static Coordinates operator +(Coordinates c1, Coordinates c2)
     {
         return new(c1.x + c2.x, c1.y + c2.y);
+    }
+
+    public static Coordinates operator -(Coordinates c1, Coordinates c2)
+    {
+        return new(c1.x - c2.x, c1.y - c2.y);
     }
 }

@@ -8,28 +8,28 @@ namespace Day6
         {
             string[] input = Advent.GetInput(typeof(Program).Namespace);
 
-            char[,] arr = ParseInput(input);
-            var guardPos = GetGuardPos(arr);
-            MarkPath(arr, guardPos);
+            Grid<char> grid = Advent.ConvertInputToGrid<char>(input);
+            var guardPos = GetGuardPos(grid);
+            MarkPath(grid, guardPos);
 
-            Console.WriteLine(Part1(arr));
+            Console.WriteLine(Part1(grid));
 
-            Console.WriteLine(Part2(arr, guardPos));
+            Console.WriteLine(Part2(grid, guardPos));
         }
         
-        static int Part1(char[,] input)
+        static int Part1(Grid<char> grid)
         {
-            return CountX(input);
+            return CountX(grid);
         }
 
-        static int Part2(char[,] input, (int, int) guardPos)
+        static int Part2(Grid<char> grid, Coordinates guardPos)
         {
             int sum = 0;
-            List<(int, int)> listOfX = FindAllX(input);
+            List<Coordinates> listOfX = FindAllX(grid);
 
             foreach (var x in listOfX)
             {
-                if (IsGuardLooped(input, guardPos, x))
+                if (IsGuardLooped(grid, guardPos, x))
                 {
                     sum++;
                 }
@@ -37,37 +37,30 @@ namespace Day6
             return sum;
         }
 
-        static (int, int) AddTuples((int, int) t1, (int, int) t2)
+        static List<Coordinates> FindAllX(Grid<char> grid)
         {
-            return (t1.Item1 + t2.Item1, t1.Item2 + t2.Item2);
-        }
-
-        static List<(int, int)> FindAllX(char[,] input)
-        {
-            int w = input.GetLength(0), h = input.GetLength(1);
-            List<(int, int)> list = new List<(int, int)>();
-            for (int x = 0; x < w; x++)
+            var list = new List<Coordinates>();
+            for (int y = 0; y < grid.height; y++)
             {
-                for (int y = 0; y < h; y++)
+                for (int x = 0; x < grid.width; x++)
                 {
-                    if (input[x, y] == 'X')
+                    if (grid.GetValue(x, y) == 'X')
                     {
-                        list.Add((x, y));
+                        list.Add(new (x, y));
                     }
                 }
             }
             return list;
         }
 
-        static int CountX(char[,] input)
+        static int CountX(Grid<char> grid)
         {
-            int w = input.GetLength(0), h = input.GetLength(1);
             int sum = 0;
-            for (int x = 0; x < w; x++)
+            for (int y = 0; y < grid.height; y++)
             {
-                for (int y = 0; y < h; y++)
+                for (int x = 0; x < grid.width; x++)
                 {
-                    if (input[x, y] == 'X')
+                    if (grid.GetValue(x, y) == 'X')
                     {
                         sum++;
                     }
@@ -76,32 +69,30 @@ namespace Day6
             return sum;
         }
 
-        static bool IsGuardLooped(char[,] input, (int, int) guardsPos, (int, int) xPos)
+        static bool IsGuardLooped(Grid<char> grid, Coordinates curPos, Coordinates xPos)
         {
-            int x, y, nextX, nextY, direction = 0;
-            (x, y) = guardsPos;
-            int w = input.GetLength(0), h = input.GetLength(1);
-            // Coordinates in (y, x) arrengement
-            (int, int)[] walk = { (-1, 0), (0, 1), (1, 0), (0, -1) };
-            List<(int, int, int)> hits = new List<(int, int, int)>();
+            int direction = 0;
+            Coordinates nextPos;
+            Coordinates[] walk = { Coordinates.Up, Coordinates.Right, Coordinates.Down, Coordinates.Left };
+            var hits = new List<(Coordinates, int)>();
 
             // replace an X with new obstacle, revert change after checking
-            input[xPos.Item1, xPos.Item2] = '#';
+            grid.SetValue(xPos, '#');
 
-            (nextX, nextY) = AddTuples((x, y), walk[direction]);
+            nextPos = curPos + walk[direction];
 
-            while (nextY != -1 && nextX != -1 && nextY != h && nextX != w)
+            while (nextPos.X != -1 && nextPos.Y != -1 && nextPos.Y != grid.height && nextPos.X != grid.width)
             {
-                if (input[nextX, nextY] == '#')
+                if (grid.GetValue(nextPos) == '#')
                 {
-                    if (hits.Contains((nextX,nextY, direction)))
+                    if (hits.Contains((nextPos, direction)))
                     {
-                        input[xPos.Item1, xPos.Item2] = 'X';
+                        grid.SetValue(xPos, 'X');
                         return true;
                     }
                     else
                     {
-                        hits.Add((nextX, nextY, direction));
+                        hits.Add((nextPos, direction));
                     }
                     if (direction == 3)
                     {
@@ -114,27 +105,27 @@ namespace Day6
                 }
                 else
                 {
-                    (x, y) = (nextX, nextY);
+                    curPos = nextPos;
                 }
-                (nextX, nextY) = AddTuples((x, y), walk[direction]);
+                nextPos = curPos + walk[direction];
             }
-            input[xPos.Item1, xPos.Item2] = 'X';
+            grid.SetValue(xPos, 'X');
             return false;
         }
 
-        static void MarkPath(char[,] input, (int, int) guardPos)
+        static void MarkPath(Grid<char> grid, Coordinates curPos)
         {
-            int x, y, nextX, nextY, direction = 0;
-            (x, y) = guardPos;
-            int w = input.GetLength(0), h = input.GetLength(1);
-            // Coordinates in (y, x) arrengement
-            (int, int)[] walk = { (-1, 0), (0, 1), (1, 0), (0, -1) };
+            int direction = 0;
 
-            (nextX, nextY) = AddTuples((x, y), walk[direction]);
+            Coordinates nextPos;
 
-            while (nextY != -1 && nextX != -1 && nextY != h && nextX != w)
+            Coordinates[] walk = { Coordinates.Up, Coordinates.Right, Coordinates.Down, Coordinates.Left };
+
+            nextPos = curPos + walk[direction];
+
+            while (nextPos.X != -1 && nextPos.Y != -1 && nextPos.Y != grid.height && nextPos.X != grid.width)
             {
-                if (input[nextX, nextY] == '#')
+                if (grid.GetValue(nextPos) == '#')
                 {
                     if (direction == 3)
                     {
@@ -147,43 +138,28 @@ namespace Day6
                 }
                 else
                 {
-                    input[x, y] = 'X';
-                    (x, y) = (nextX, nextY);
+                    grid.SetValue(curPos, 'X');
+                    curPos = nextPos;
                 }
-                (nextX, nextY) = AddTuples((x, y), walk[direction]);
+                nextPos = curPos + walk[direction];
             }
-            input[x, y] = 'X';
+            grid.SetValue(curPos, 'X');
         }
 
-        static (int, int) GetGuardPos(char[,] input)
+        static Coordinates GetGuardPos(Grid<char> grid)
         {
-            int w = input.GetLength(0), h = input.GetLength(1);
-
-            for (int x = 0; x < h; x++)
+            for (int x = 0; x < grid.height; x++)
             {
-                for (int y = 0; y < w; y++)
+                for (int y = 0; y < grid.width; y++)
                 {
-                    if (input[x, y] == '^')
+                    if (grid.GetValue(x, y) == '^')
                     {
-                        return (x, y);
+                        return new(x, y);
                     }
                 }
             }
-            return (-1, -1);
+            return new(-1, -1);
         }
 
-        static char[,] ParseInput(string[] input)
-        {
-            int w = input[0].Length, h = input.Length;
-            char[,] output = new char[w, h];
-            for (int i = 0; i < w; i++)
-            {
-                for (int j = 0; j < h; j++)
-                {
-                    output[i,j] = input[i][j];
-                }
-            }
-            return output;
-        }
     }
 }
