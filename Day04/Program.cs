@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Utility;
 
-namespace Day4
+namespace Day04
 {
     internal class Program
     {

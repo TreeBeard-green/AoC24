@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using Utility;
 
-namespace Day9
+namespace Day09
 {
     /*
      * Part 1 functional but inefficient, needs remaking

@@ -1,6 +1,6 @@
 ﻿using Utility;
 
-namespace Day1
+namespace Day01
 {
     internal class Program
     {

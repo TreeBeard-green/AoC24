@@ -5,10 +5,6 @@ public static class Advent
 
     public static string[] GetInput(string day)
     {
-        if (day.Length < 5)
-        {
-            day = "Day0" + day[3];
-        }
         string path = AppDomain.CurrentDomain.BaseDirectory.Split(day)[0] + @"Data\" + day + ".txt";
         return File.ReadAllLines(path);
     }
@@ -162,6 +158,11 @@ public struct Coordinates(int n1, int n2)
     public readonly Coordinates SumOfCoords((int, int) input)
     {
         return new(x + input.Item1, y + input.Item2);
+    }
+
+    public readonly Coordinates Multiplied(int input)
+    {
+        return new(x * input, y * input);
     }
 
     public static Coordinates operator +(Coordinates c1, Coordinates c2)
