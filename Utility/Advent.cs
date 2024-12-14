@@ -45,33 +45,46 @@ public static class Advent
 
     public static Grid<T> ConvertInputToGrid<T>(string[] input)
     {
-        int w = input[0].Length, h = input.Length;
-        T[,] output = new T[w, h];
+        int width = input[0].Length, height = input.Length;
+        T[,] output = new T[width, height];
 
-        for (int i = 0; i < h; i++)
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < w; j++)
+            for (int j = 0; j < width; j++)
             {
                 output[j, i] = (T)Convert.ChangeType(input[i][j], typeof(T));
             }
         }
-        return new Grid<T>(output, w, h);
+        return new Grid<T>(output, width, height);
     }
 
     public static Grid<T> ConvertInputToGrid<T>(string[] input, int padSize, char pad)
     {
         input = PadInput(input, padSize, pad);
-        int w = input[0].Length, h = input.Length;
-        T[,] output = new T[w, h];
+        int width = input[0].Length, height = input.Length;
+        T[,] output = new T[width, height];
 
-        for (int i = 0; i < h; i++)
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < w; j++)
+            for (int j = 0; j < width; j++)
             {
                 output[j, i] = (T)Convert.ChangeType(input[i][j], typeof(T));
             }
         }
-        return new Grid<T>(output, w, h);
+        return new Grid<T>(output, width, height);
+    }
+
+    public static Grid<T> CreateEmptyGrid<T>(int width, int height, T value)
+    {
+        T[,] output = new T[width, height];
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                output[j, i] = value;
+            }
+        }
+        return new Grid<T>(output, width, height);
     }
 }
 
